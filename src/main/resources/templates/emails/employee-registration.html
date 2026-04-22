@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Welcome to IT Consultancy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333333;
+        }
+
+        .wrapper {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .header {
+            background-color: #1a73e8;
+            padding: 36px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            color: #d0e4ff;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .body {
+            padding: 40px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+
+        .message {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555555;
+            margin-bottom: 28px;
+        }
+
+        .id-card {
+            background-color: #f0f5ff;
+            border-left: 4px solid #1a73e8;
+            border-radius: 4px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+        }
+
+        .id-card .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888888;
+            margin-bottom: 6px;
+        }
+
+        .id-card .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a73e8;
+            letter-spacing: 1px;
+        }
+
+        .info-box {
+            background-color: #fafafa;
+            border: 1px solid #eeeeee;
+            border-radius: 4px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: #555555;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #333333;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #eeeeee;
+            margin: 28px 0;
+        }
+
+        .footer {
+            background-color: #f9f9f9;
+            padding: 24px 40px;
+            text-align: center;
+            border-top: 1px solid #eeeeee;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #aaaaaa;
+            line-height: 1.6;
+        }
+
+        .footer .company {
+            font-weight: 600;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>IT Consultancy</h1>
+        <p>Internal Employee Portal</p>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+
+        <p class="greeting">Welcome aboard, <span th:text="${firstName}">Employee</span>!</p>
+
+        <p class="message">
+            Your employee account has been successfully created. You are now part of the
+            IT Consultancy team. Please save your Employee ID below — you will need it
+            to access the portal and for all internal communications.
+        </p>
+
+        <!-- ID Card -->
+        <div class="id-card">
+            <div class="label">Your Employee ID</div>
+            <div class="value" th:text="${generatedId}">EMP-2026-0001</div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <p><strong>Next steps:</strong></p>
+            <p>
+                Log in to the employee portal using your registered email address and the
+                password you set during registration. If you have any issues accessing
+                your account, contact the HR team.
+            </p>
+        </div>
+
+        <hr class="divider"/>
+
+        <p class="message" style="font-size: 13px; color: #888888;">
+            If you did not register for this account, please contact support immediately
+            at <strong>support@itconsultancy.com</strong>.
+        </p>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p class="company">IT Consultancy Platform</p>
+        <p>This is an automated message — please do not reply to this email.</p>
+        <p>&copy; 2026 IT Consultancy. All rights reserved.</p>
+    </div>
+
+</div>
+</body>
+</html>
