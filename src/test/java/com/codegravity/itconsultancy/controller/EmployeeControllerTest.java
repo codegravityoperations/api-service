@@ -5,6 +5,7 @@ import com.codegravity.itconsultancy.dto.response.RegistrationResponse;
 import com.codegravity.itconsultancy.enums.EmailStatus;
 import com.codegravity.itconsultancy.enums.UserType;
 import com.codegravity.itconsultancy.exception.DuplicateResourceException;
+import com.codegravity.itconsultancy.security.CustomUserDetailsService;
 import com.codegravity.itconsultancy.security.JwtTokenProvider;
 import com.codegravity.itconsultancy.service.EmployeeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,6 +45,9 @@ class EmployeeControllerTest {
 
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     @DisplayName("POST /api/employees/register → 201 Created with valid payload")
