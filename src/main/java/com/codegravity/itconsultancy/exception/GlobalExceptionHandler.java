@@ -4,6 +4,7 @@ import com.codegravity.itconsultancy.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -100,5 +101,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("An unexpected error occurred"));
+    }
+
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMessageConversion(HttpMessageConversionException ex) {
+        log.warn("Message conversion error: {}", ex.getMessage(), ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Invalid request body: " + ex.getMostSpecificCause().getMessage()));
     }
 }
