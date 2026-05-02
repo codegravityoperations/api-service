@@ -31,7 +31,7 @@ jobs:
       # WHY --no-transfer-progress:
       #   Suppresses Maven download noise in CI logs — cleaner output
       - name: Run tests
-        run: mvn test -Dspring.profiles.active=test --no-transfer-progress
+        run: mvn clean test -U -Dspring.profiles.active=test --no-transfer-progress
 
       # 4. Upload test report (visible in GitHub Actions UI after run)
       # This runs even if tests FAIL — so you can see what broke
