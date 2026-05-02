@@ -1,0 +1,68 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: "us-east-1"
+    ECR_REPOSITORY_URI: "493499579914.dkr.ecr.us-east-1.amazonaws.com/itconsultancy_backend"
+    ECS_CLUSTER: "codegravity"
+    ECS_SERVICE: "backend_cluster-service-z00naxrm"
+    TASK_DEFINITION: "backend_cluster"
+    CONTAINER_NAME: "backend"
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+    commands:
+      - echo "Build started at $(date)"
+      - echo "Commit SHA = $CODEBUILD_RESOLVED_SOURCE_VERSION"
+
+  pre_build:
+    commands:
+      # Login to ECR
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_REGION |
+        docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
+
+      # Use first 7 chars of commit SHA as image tag
+      # CODEBUILD_RESOLVED_SOURCE_VERSION is injected by CodePipeline
+      - IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}"
+      - echo "Image will be tagged as $IMAGE_TAG"
+
+      # Run tests inside CodeBuild using Testcontainers
+      # CodeBuild managed images have Docker available — Testcontainers works
+      - echo "Running tests..."
+      - mvn test -Dspring.profiles.active=test --no-transfer-progress
+
+  build:
+    commands:
+      - echo "Building JAR..."
+      - mvn package -DskipTests --no-transfer-progress
+
+      - echo "Building Docker image..."
+      - docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG .
+      - docker tag $ECR_REPOSITORY_URI:$IMAGE_TAG $ECR_REPOSITORY_URI:latest
+
+  post_build:
+    commands:
+      - echo "Pushing image to ECR..."
+      - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
+      - docker push $ECR_REPOSITORY_URI:latest
+
+      # This file is what the Deploy stage reads to know which image to deploy
+      - printf '[{"name":"%s","imageUri":"%s"}]' \
+        $CONTAINER_NAME \
+        $ECR_REPOSITORY_URI:$IMAGE_TAG \
+        > imagedefinitions.json
+
+      - echo "imagedefinitions.json contents:"
+      - cat imagedefinitions.json
+
+      - echo "Build complete at $(date)"
+
+# imagedefinitions.json must be in artifacts
+# CodePipeline Deploy stage picks this up from S3 automatically
+artifacts:
+  files:
+    - imagedefinitions.json
+  discard-paths: yes
