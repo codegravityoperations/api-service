@@ -5,6 +5,7 @@ import com.codegravity.itconsultancy.dto.response.RegistrationResponse;
 import com.codegravity.itconsultancy.enums.EmailStatus;
 import com.codegravity.itconsultancy.enums.UserType;
 import com.codegravity.itconsultancy.exception.DuplicateResourceException;
+import com.codegravity.itconsultancy.security.JwtTokenProvider;
 import com.codegravity.itconsultancy.service.EmployeeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +41,9 @@ class EmployeeControllerTest {
     // in the Spring context — different from @Mock which is pure Mockito
     @MockitoBean
     private EmployeeService employeeService;
+
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
 
     @Test
     @DisplayName("POST /api/employees/register → 201 Created with valid payload")
