@@ -33,13 +33,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class EmployeeControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;      // Simulates HTTP requests without a real server
+    private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper; // Converts Java objects ↔ JSON
+    // ← REMOVE @Autowired, just new it up
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // @MockitoBean replaces the real EmployeeService bean with a Mockito mock
-    // in the Spring context — different from @Mock which is pure Mockito
     @MockitoBean
     private EmployeeService employeeService;
 
