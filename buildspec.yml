@@ -49,14 +49,13 @@ phases:
       - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
       - docker push $ECR_REPOSITORY_URI:latest
 
-      # This file is what the Deploy stage reads to know which image to deploy
-      - printf '[{"name":"%s","imageUri":"%s"}]' \
-        $CONTAINER_NAME \
-        $ECR_REPOSITORY_URI:$IMAGE_TAG \
-        > imagedefinitions.json
+      - FULL_IMAGE="$ECR_REPOSITORY_URI:$IMAGE_TAG"
+      - echo -n "[{\"name\":\"$CONTAINER_NAME\",\"imageUri\":\"$FULL_IMAGE\"}]" > imagedefinitions.json
 
       - echo "imagedefinitions.json contents:"
       - cat imagedefinitions.json
+
+      - python3 -c "import json,sys; data=json.load(open('imagedefinitions.json')); print('Valid JSON:', data)"
 
       - echo "Build complete at $(date)"
 
