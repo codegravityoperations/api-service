@@ -1,59 +1,155 @@
-name: Backend CI
+# .github/workflows/ci.yml
+name: Backend CI/CD
 
-# WHEN does this run?
 on:
   pull_request:
-    branches: [ main ]       # Every PR targeting main → run tests
+    branches: [ main ]    # PR → run tests only, no deploy
   push:
-    branches: [ main ]       # Every merge to main → run tests + ready for Phase 2
+    branches: [ main ]    # Merge to main → test + build + push to ECR + deploy ECS
+
+env:
+  # These reference GitHub Secrets you added — never hardcoded
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
+  ECS_CLUSTER: codegravity
+  ECS_SERVICE: backend_cluster-service-z00naxrm
+  CONTAINER_NAME: backend
+  TASK_DEFINITION: backend_cluster
 
 jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1: Test (runs on EVERY push and PR)
+  # ─────────────────────────────────────────────
   test:
-    name: Build & Test
-    runs-on: ubuntu-latest   # GitHub's free Linux runner
+    name: Run Tests
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. Check out your code
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install Java 21 (matches your local setup)
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven              # Caches ~/.m2 between runs → faster CI
+          cache: maven
 
-      # 3. Run tests
-      # WHY -Dspring.profiles.active=test:
-      #   Activates application-test.properties which points to Testcontainers DB
-      # WHY --no-transfer-progress:
-      #   Suppresses Maven download noise in CI logs — cleaner output
       - name: Run tests
         run: mvn test -Dspring.profiles.active=test --no-transfer-progress
 
-      # 4. Upload test report (visible in GitHub Actions UI after run)
-      # This runs even if tests FAIL — so you can see what broke
       - name: Upload test report
-        if: always()
+        if: always()   # Upload even if tests fail — so you can see what broke
         uses: actions/upload-artifact@v4
         with:
           name: test-report
           path: target/surefire-reports/
           retention-days: 7
 
-      # 5. Build the JAR (only on push to main, not on PRs)
-      # WHY -DskipTests: tests already ran in step 3, no need to run twice
+  # ─────────────────────────────────────────────
+  # JOB 2: Build & Deploy (runs ONLY on push to main)
+  # Depends on Job 1 — won't run if tests fail
+  # ─────────────────────────────────────────────
+  build-and-deploy:
+    name: Build Image & Deploy to ECS
+    runs-on: ubuntu-latest
+    needs: test   # ← Critical: tests must pass before we deploy anything
+
+    # Only deploy on actual merge to main, never on PRs
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # Build the JAR — tests already ran in Job 1, skip them here
       - name: Build JAR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: mvn package -DskipTests --no-transfer-progress
 
-      # 6. Save the JAR as artifact (Phase 2 will use this)
-      - name: Upload JAR artifact
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+      # Configure AWS credentials using the IAM user secrets you added
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          name: app-jar
-          path: target/*.jar
-          retention-days: 1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # Login to ECR — this action outputs registry URL we can reference below
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Build Docker image and push with two tags:
+      # 1. Short git SHA (e.g. abc1234) — immutable, traceable, rollback-safe
+      # 2. latest — convenience pointer
+      - name: Build, tag, and push Docker image to ECR
+        id: build-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}   # Full SHA — ECR will store it, we display short version
+        run: |
+          # Build
+          docker build -t $ECR_REPOSITORY_URI:${IMAGE_TAG::7} .
+
+          # Tag as latest too
+          docker tag $ECR_REPOSITORY_URI:${IMAGE_TAG::7} $ECR_REPOSITORY_URI:latest
+
+          # Push both
+          docker push $ECR_REPOSITORY_URI:${IMAGE_TAG::7}
+          docker push $ECR_REPOSITORY_URI:latest
+
+          # Save the short tag for later steps
+          echo "image_tag=${IMAGE_TAG::7}" >> $GITHUB_OUTPUT
+          echo "Pushed image: $ECR_REPOSITORY_URI:${IMAGE_TAG::7}"
+
+      # Download the current task definition from AWS
+      # WHY: We never hardcode the task definition JSON.
+      # We fetch the live one, update only the image, redeploy.
+      # This preserves all your env vars, memory settings, port mappings exactly.
+      - name: Download current ECS task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition $TASK_DEFINITION \
+            --query taskDefinition \
+            > task-definition.json
+          echo "Current task definition downloaded"
+          cat task-definition.json
+
+      # Update the image URI inside the task definition JSON
+      # This uses the official AWS action — handles all the JSON manipulation
+      - name: Update ECS task definition with new image
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ env.ECR_REPOSITORY_URI }}:${{ steps.build-image.outputs.image_tag }}
+
+      # Deploy the updated task definition to ECS
+      # ECS will do a rolling deploy: start new task → wait for healthy → stop old task
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true   # GitHub Actions waits until deploy is done
+          # Fails the job if ECS can't stabilize — safety net
+
+      # Print a summary so you can see exactly what was deployed
+      - name: Deployment summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Deployment complete"
+          echo "Image: $ECR_REPOSITORY_URI:${{ steps.build-image.outputs.image_tag }}"
+          echo "Cluster: $ECS_CLUSTER"
+          echo "Service: $ECS_SERVICE"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
