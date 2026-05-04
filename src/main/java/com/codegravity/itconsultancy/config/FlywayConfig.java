@@ -13,7 +13,7 @@ public class FlywayConfig {
     public Flyway flyway(DataSource dataSource) {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
-                .locations("classpath:db/migration")
+                .locations("classpath:/db/migration")
                 .baselineOnMigrate(true)
                 .baselineVersion("0")
                 .load();
