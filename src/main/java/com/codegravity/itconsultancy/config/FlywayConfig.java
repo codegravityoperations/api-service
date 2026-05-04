@@ -11,9 +11,10 @@ public class FlywayConfig {
 
     @Bean
     public Flyway flyway(DataSource dataSource) {
-        Flyway flyway = Flyway.configure()
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Flyway flyway = Flyway.configure(classLoader)
                 .dataSource(dataSource)
-                .locations("classpath:/db/migration")
+                .locations("classpath:db/migration")
                 .baselineOnMigrate(true)
                 .baselineVersion("0")
                 .load();

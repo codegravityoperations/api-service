@@ -1430,3 +1430,90 @@ Caused by: java.sql.SQLSyntaxErrorException: You have an error in your SQL synta
 2026-05-04 17:38:04.075 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - [, ] - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-05-04 17:38:04.075 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - [, ] - ItConsultancyPool - Shutdown initiated...
 2026-05-04 17:38:04.124 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - [, ] - ItConsultancyPool - Shutdown completed.
+2026-05-04 18:14:36.032 [restartedMain] INFO  c.c.i.ItConsultancyApplication - [, ] - Starting ItConsultancyApplication using Java 21.0.8 with PID 8332 (C:\Users\yraja\Desktop\it-consultancy\target\classes started by yraja in C:\Users\yraja\Desktop\it-consultancy)
+2026-05-04 18:14:36.034 [restartedMain] DEBUG c.c.i.ItConsultancyApplication - [, ] - Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-05-04 18:14:36.035 [restartedMain] INFO  c.c.i.ItConsultancyApplication - [, ] - No active profile set, falling back to 1 default profile: "dev"
+2026-05-04 18:14:36.108 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - [, ] - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-04 18:14:36.108 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - [, ] - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-04 18:14:38.133 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - [, ] - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-04 18:14:38.248 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - [, ] - Finished Spring Data repository scanning in 100 ms. Found 5 JPA repository interfaces.
+2026-05-04 18:14:39.476 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - [, ] - Tomcat initialized with port 8080 (http)
+2026-05-04 18:14:39.497 [restartedMain] INFO  o.a.catalina.core.StandardService - [, ] - Starting service [Tomcat]
+2026-05-04 18:14:39.497 [restartedMain] INFO  o.a.catalina.core.StandardEngine - [, ] - Starting Servlet engine: [Apache Tomcat/11.0.20]
+2026-05-04 18:14:39.584 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - [, ] - Root WebApplicationContext: initialization completed in 3474 ms
+2026-05-04 18:14:39.993 [restartedMain] INFO  org.hibernate.orm.jpa - [, ] - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-04 18:14:40.156 [restartedMain] INFO  org.hibernate.orm.core - [, ] - HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-05-04 18:14:41.069 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - [, ] - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-04 18:14:41.113 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - [, ] - ItConsultancyPool - Starting...
+2026-05-04 18:14:42.215 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - [, ] - ItConsultancyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@4f3d292b
+2026-05-04 18:14:42.219 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - [, ] - ItConsultancyPool - Start completed.
+2026-05-04 18:14:42.394 [restartedMain] WARN  org.hibernate.orm.deprecation - [, ] - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-04 18:14:42.461 [restartedMain] INFO  o.hibernate.orm.connections.pooling - [, ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://itconsultancy.coxw4u2o0c1v.us-east-1.rds.amazonaws.com:3306/itconsultancy_db]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.4.8
+	Default catalog/schema: itconsultancy_db/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-04 18:14:43.666 [restartedMain] INFO  org.hibernate.orm.core - [, ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-04 18:14:43.930 [restartedMain] DEBUG org.hibernate.SQL - [, ] - 
+    alter table candidates 
+       modify column status enum ('ACTIVE','INACTIVE','PENDING') not null
+2026-05-04 18:14:44.048 [restartedMain] DEBUG org.hibernate.SQL - [, ] - 
+    alter table employees 
+       modify column status enum ('ACTIVE','INACTIVE','PENDING') not null
+2026-05-04 18:14:44.167 [restartedMain] DEBUG org.hibernate.SQL - [, ] - 
+    alter table mail_logs 
+       modify column status enum ('FAILED','PENDING','SENT')
+2026-05-04 18:14:44.293 [restartedMain] DEBUG org.hibernate.SQL - [, ] - 
+    alter table mail_logs 
+       modify column user_type enum ('CANDIDATE','EMPLOYEE') not null
+2026-05-04 18:14:44.394 [restartedMain] DEBUG org.hibernate.SQL - [, ] - 
+    alter table refresh_tokens 
+       modify column user_type enum ('CANDIDATE','EMPLOYEE') not null
+2026-05-04 18:14:44.522 [restartedMain] DEBUG org.hibernate.SQL - [, ] - 
+    alter table roles 
+       modify column name enum ('ROLE_ADMIN','ROLE_CANDIDATE','ROLE_EMPLOYEE') not null
+2026-05-04 18:14:45.047 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - [, ] - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-04 18:14:45.204 [restartedMain] INFO  o.s.d.j.r.q.QueryEnhancerFactories - [, ] - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-04 18:14:45.589 [restartedMain] DEBUG c.c.i.s.JwtAuthenticationFilter - [, ] - Filter 'jwtAuthenticationFilter' configured for use
+2026-05-04 18:14:45.720 [restartedMain] TRACE o.s.s.c.a.a.c.AuthenticationConfiguration$EnableGlobalAuthenticationAutowiredConfigurer - [, ] - Eagerly initializing {securityConfig=com.codegravity.itconsultancy.config.SecurityConfig$$SpringCGLIB$$0@69fb2a43}
+2026-05-04 18:14:45.739 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - [, ] - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2026-05-04 18:14:45.739 [restartedMain] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - [, ] - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-05-04 18:14:47.373 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor - [, ] - Database: jdbc:mysql://itconsultancy.coxw4u2o0c1v.us-east-1.rds.amazonaws.com:3306/itconsultancy_db (MySQL 8.4)
+2026-05-04 18:14:47.778 [restartedMain] WARN  o.f.c.i.database.base.Database - [, ] - Using MySQL 8.4 which is newer than the version Flyway has been verified with. The latest verified version of MySQL is 8.1.
+2026-05-04 18:14:48.179 [restartedMain] INFO  o.f.core.internal.command.DbValidate - [, ] - Successfully validated 2 migrations (execution time 00:00.325s)
+2026-05-04 18:14:48.784 [restartedMain] INFO  o.f.core.internal.command.DbMigrate - [, ] - Current version of schema `itconsultancy_db`: << Empty Schema >>
+2026-05-04 18:14:49.033 [restartedMain] INFO  o.f.core.internal.command.DbMigrate - [, ] - Migrating schema `itconsultancy_db` to version "1 - init schema"
+2026-05-04 18:14:49.622 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Table 'roles' already exists (SQL State: 42S01 - Error Code: 1050)
+2026-05-04 18:14:49.753 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Table 'mail_logs' already exists (SQL State: 42S01 - Error Code: 1050)
+2026-05-04 18:14:49.883 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Integer display width is deprecated and will be removed in a future release. (SQL State: HY000 - Error Code: 1681)
+2026-05-04 18:14:49.883 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Table 'candidates' already exists (SQL State: 42S01 - Error Code: 1050)
+2026-05-04 18:14:50.017 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Integer display width is deprecated and will be removed in a future release. (SQL State: HY000 - Error Code: 1681)
+2026-05-04 18:14:50.017 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Table 'employees' already exists (SQL State: 42S01 - Error Code: 1050)
+2026-05-04 18:14:51.288 [restartedMain] INFO  o.f.core.internal.command.DbMigrate - [, ] - Migrating schema `itconsultancy_db` to version "2 - add jwt and rbac"
+2026-05-04 18:14:51.465 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Integer display width is deprecated and will be removed in a future release. (SQL State: HY000 - Error Code: 1681)
+2026-05-04 18:14:51.465 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Table 'refresh_tokens' already exists (SQL State: 42S01 - Error Code: 1050)
+2026-05-04 18:14:51.602 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Table 'employee_roles' already exists (SQL State: 42S01 - Error Code: 1050)
+2026-05-04 18:14:51.745 [restartedMain] WARN  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - DB: Table 'candidate_roles' already exists (SQL State: 42S01 - Error Code: 1050)
+2026-05-04 18:14:52.028 [restartedMain] INFO  o.f.c.i.s.DefaultSqlScriptExecutor - [, ] - +---+
+| 1 |
++---+
+| 1 |
++---+
+
+2026-05-04 18:14:53.161 [restartedMain] INFO  o.f.core.internal.command.DbMigrate - [, ] - Successfully applied 2 migrations to schema `itconsultancy_db`, now at version v2 (execution time 00:02.289s)
+2026-05-04 18:14:54.137 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - [, ] - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-05-04 18:14:55.278 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - [, ] - Exposing 2 endpoints beneath base path '/actuator'
+2026-05-04 18:14:55.406 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - [, ] - Tomcat started on port 8080 (http) with context path '/'
+2026-05-04 18:14:55.424 [restartedMain] INFO  c.c.i.ItConsultancyApplication - [, ] - Started ItConsultancyApplication in 20.276 seconds (process running for 21.091)
+2026-05-04 18:15:04.931 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - [, ] - Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-04 18:15:04.940 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - [, ] - Graceful shutdown complete
+2026-05-04 18:15:04.948 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - [, ] - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-04 18:15:04.955 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - [, ] - ItConsultancyPool - Shutdown initiated...
+2026-05-04 18:15:05.014 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - [, ] - ItConsultancyPool - Shutdown completed.
