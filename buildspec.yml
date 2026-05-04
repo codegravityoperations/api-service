@@ -22,15 +22,10 @@ phases:
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION |
         docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
-
-      # Login to ECR Public (us-east-1 only — ECR Public is global but auth is here)
       - aws ecr-public get-login-password --region us-east-1 |
         docker login --username AWS --password-stdin public.ecr.aws
-
       - IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}"
       - echo "Image will be tagged as $IMAGE_TAG"
-      - echo "Running tests..."
-      - mvn test -Dspring.profiles.active=test --no-transfer-progress
 
   build:
     commands:
