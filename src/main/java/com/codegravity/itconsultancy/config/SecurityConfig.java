@@ -23,6 +23,7 @@ import com.codegravity.itconsultancy.constants.CorsConstants;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(ApiConstants.PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers("/api/employees/**").hasRole("EMPLOYEE")
                         .requestMatchers("/api/candidates/**").hasRole("CANDIDATE")
