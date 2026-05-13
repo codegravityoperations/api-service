@@ -43,7 +43,6 @@ $RECYCLE.BIN/
 # --- Database / Environment ---
 # Never push your actual secrets or local DB data
 .env
-*.sql
 *.temp
 
 # --- Flyway ---
