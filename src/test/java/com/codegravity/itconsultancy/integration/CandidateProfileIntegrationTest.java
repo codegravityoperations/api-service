@@ -89,7 +89,8 @@ class CandidateProfileIntegrationTest {
         // ── 2. Login to get JWT ───────────────────────────────────────
         Map<String, String> loginBody = Map.of(
                 "email", "integration.tester@example.com",
-                "password", "SecurePass123!"
+                "password", "SecurePass123!",
+                "userType", "CANDIDATE"
         );
 
         String loginJson = mockMvc.perform(post("/api/auth/login")
@@ -165,7 +166,9 @@ class CandidateProfileIntegrationTest {
         String loginJson = mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                Map.of("email", "attacker.user403@example.com", "password", "SecurePass123!"))))
+                                Map.of("email", "attacker.user403@example.com",
+                                       "password", "SecurePass123!",
+                                       "userType", "CANDIDATE"))))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
