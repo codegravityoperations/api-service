@@ -46,8 +46,10 @@ class CandidateProfileIntegrationTest {
     @Autowired
     private CandidateRepository candidateRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    // Instantiated directly — avoids Spring Boot 4.x context wiring issue
+    // with ObjectMapper when @SpringBootTest + @AutoConfigureMockMvc are combined.
+    // We only parse Map<String, Object> so no custom modules are needed.
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Avoid real SMTP calls during integration tests
     @MockitoBean
