@@ -1,8 +1,13 @@
 package com.codegravity.itconsultancy.service;
 
+import com.codegravity.itconsultancy.dto.request.RegistrationEmailRequest;
 import com.codegravity.itconsultancy.enums.EmailStatus;
-import com.codegravity.itconsultancy.enums.UserType;
 
 public interface MailService {
-    EmailStatus sendRegistrationEmail(String toEmail, String firstName, UserType userType, String generatedId);
+
+    /**
+     * Sends a registration confirmation email and persists a mail-log entry.
+     * Build the request via {@link RegistrationEmailRequest#builder()}.
+     */
+    EmailStatus sendRegistrationEmail(RegistrationEmailRequest request);
 }

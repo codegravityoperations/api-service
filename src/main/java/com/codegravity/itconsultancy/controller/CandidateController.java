@@ -1,16 +1,24 @@
 package com.codegravity.itconsultancy.controller;
 
-import com.codegravity.itconsultancy.constants.ApiConstants;
+import com.codegravity.itconsultancy.dto.request.CandidateProfileUpdateRequest;
 import com.codegravity.itconsultancy.dto.request.CandidateRegisterRequest;
 import com.codegravity.itconsultancy.dto.response.ApiResponse;
+import com.codegravity.itconsultancy.dto.response.CandidateProfileResponse;
 import com.codegravity.itconsultancy.dto.response.RegistrationResponse;
 import com.codegravity.itconsultancy.service.CandidateService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Candidates", description = "Candidate registration and profile management")
 @RestController
 @RequestMapping("/api/candidates")
 @RequiredArgsConstructor
@@ -18,6 +26,7 @@ public class CandidateController {
 
     private final CandidateService candidateService;
 
+    @Operation(summary = "Register a new candidate")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<RegistrationResponse>> register(
             @Valid @RequestBody CandidateRegisterRequest request) {
@@ -26,5 +35,28 @@ public class CandidateController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Candidate registered successfully", response));
+    }
+
+    @Operation(
+            summary = "Update candidate profile",
+            description = "Updates education, work authorisation, tools, and accommodation fields. " +
+                    "A CANDIDATE may only update their own profile; an ADMIN may update any profile.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile updated"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Validation error"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Access denied"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Candidate not found")
+    })
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<ApiResponse<CandidateProfileResponse>> updateProfile(
+            @Parameter(description = "Candidate business ID (e.g. CND_2026_00001)")
+            @PathVariable String id,
+            @Valid @RequestBody CandidateProfileUpdateRequest request,
+            Authentication authentication) {
+
+        CandidateProfileResponse response = candidateService.updateProfile(id, request, authentication);
+        return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", response));
     }
 }
