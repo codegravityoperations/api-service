@@ -1,11 +1,13 @@
 package com.codegravity.itconsultancy.service.impl;
 
 import com.codegravity.itconsultancy.dto.request.CandidateRegisterRequest;
+import com.codegravity.itconsultancy.dto.response.CandidateListResponse;
 import com.codegravity.itconsultancy.dto.response.RegistrationResponse;
 import com.codegravity.itconsultancy.entity.Candidate;
 import com.codegravity.itconsultancy.entity.RoleEntity;
 import com.codegravity.itconsultancy.enums.EmailStatus;
 import com.codegravity.itconsultancy.enums.Role;
+import com.codegravity.itconsultancy.enums.UserStatus;
 import com.codegravity.itconsultancy.enums.UserType;
 import com.codegravity.itconsultancy.exception.DuplicateResourceException;
 import com.codegravity.itconsultancy.repository.CandidateRepository;
@@ -13,8 +15,12 @@ import com.codegravity.itconsultancy.repository.RoleRepository;
 import com.codegravity.itconsultancy.service.CandidateService;
 import com.codegravity.itconsultancy.service.IdGeneratorService;
 import com.codegravity.itconsultancy.service.MailService;
+import com.codegravity.itconsultancy.specification.CandidateSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +81,35 @@ public class CandidateServiceImpl implements CandidateService {
                 .userType(UserType.CANDIDATE)
                 .generatedId(generatedId)
                 .emailStatus(emailStatus)
+                .build();
+    }
+
+    @Override
+    public Page<CandidateListResponse> searchCandidates(
+            String candidateId,
+            String firstName,
+            String lastName,
+            String email,
+            String phoneNumber,
+            UserStatus status,
+            int page,
+            int size
+    ) {
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return candidateRepository
+                .findAll(CandidateSpecification.withFilters(candidateId, firstName, lastName, email, phoneNumber, status), pageable)
+                .map(this::toListResponse);
+    }
+
+    private CandidateListResponse toListResponse(Candidate candidate) {
+        return CandidateListResponse.builder()
+                .candidateId(candidate.getCandidateId())
+                .fullName(candidate.getFirstName() + " " + candidate.getLastName())
+                .email(candidate.getEmail())
+                .phoneNumber(candidate.getPhone())
+                .status(candidate.getStatus())
+                .createdAt(candidate.getCreatedAt())
+                .updatedAt(candidate.getUpdatedAt())
                 .build();
     }
 }
