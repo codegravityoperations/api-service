@@ -1,6 +1,8 @@
 package com.codegravity.itconsultancy.service.impl;
 
+import com.codegravity.itconsultancy.dto.request.CandidateProfileUpdateRequest;
 import com.codegravity.itconsultancy.dto.request.CandidateRegisterRequest;
+import com.codegravity.itconsultancy.dto.response.CandidateProfileResponse;
 import com.codegravity.itconsultancy.dto.response.RegistrationResponse;
 import com.codegravity.itconsultancy.entity.Candidate;
 import com.codegravity.itconsultancy.entity.RoleEntity;
@@ -8,6 +10,7 @@ import com.codegravity.itconsultancy.enums.EmailStatus;
 import com.codegravity.itconsultancy.enums.Role;
 import com.codegravity.itconsultancy.enums.UserType;
 import com.codegravity.itconsultancy.exception.DuplicateResourceException;
+import com.codegravity.itconsultancy.exception.ResourceNotFoundException;
 import com.codegravity.itconsultancy.repository.CandidateRepository;
 import com.codegravity.itconsultancy.repository.RoleRepository;
 import com.codegravity.itconsultancy.service.CandidateService;
@@ -15,6 +18,9 @@ import com.codegravity.itconsultancy.service.IdGeneratorService;
 import com.codegravity.itconsultancy.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +81,59 @@ public class CandidateServiceImpl implements CandidateService {
                 .userType(UserType.CANDIDATE)
                 .generatedId(generatedId)
                 .emailStatus(emailStatus)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public CandidateProfileResponse updateProfile(String candidateId, CandidateProfileUpdateRequest request) {
+        Candidate candidate = candidateRepository.findByCandidateId(candidateId)
+                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found: " + candidateId));
+
+        assertCanUpdate(candidate);
+
+        candidate.setPhone(request.getPhone());
+        candidate.setAddress(request.getAddress());
+        candidate.setResumeUrl(request.getResumeUrl());
+
+        Candidate saved = candidateRepository.save(candidate);
+        log.info("Candidate profile updated: {}", saved.getCandidateId());
+
+        return toProfileResponse(saved);
+    }
+
+    private void assertCanUpdate(Candidate candidate) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Authentication required");
+        }
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(authority -> Role.ROLE_ADMIN.name().equals(authority.getAuthority()));
+        if (isAdmin) {
+            return;
+        }
+
+        boolean isCandidate = authentication.getAuthorities().stream()
+                .anyMatch(authority -> Role.ROLE_CANDIDATE.name().equals(authority.getAuthority()));
+        if (isCandidate && candidate.getEmail().equals(authentication.getName())) {
+            return;
+        }
+
+        throw new AccessDeniedException("Candidates can update only their own profile");
+    }
+
+    private CandidateProfileResponse toProfileResponse(Candidate candidate) {
+        return CandidateProfileResponse.builder()
+                .candidateId(candidate.getCandidateId())
+                .firstName(candidate.getFirstName())
+                .lastName(candidate.getLastName())
+                .email(candidate.getEmail())
+                .phone(candidate.getPhone())
+                .address(candidate.getAddress())
+                .appliedRole(candidate.getAppliedRole())
+                .resumeUrl(candidate.getResumeUrl())
+                .updatedAt(candidate.getUpdatedAt())
                 .build();
     }
 }
