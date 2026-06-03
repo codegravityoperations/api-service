@@ -81,6 +81,7 @@ public class SecurityConfig {
                         .requestMatchers(ApiConstants.PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/candidates").hasAnyRole("EMPLOYEE", "ADMIN")
                         .requestMatchers("/api/employees/**").hasRole("EMPLOYEE")
+                        .requestMatchers(HttpMethod.PUT, "/api/candidates/*/profile").hasAnyRole("CANDIDATE", "ADMIN")
                         .requestMatchers("/api/candidates/**").hasRole("CANDIDATE")
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
