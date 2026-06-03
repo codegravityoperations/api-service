@@ -82,6 +82,70 @@
             letter-spacing: 1px;
         }
 
+        /* Grouped Details Styling */
+        .info-section {
+            margin-bottom: 24px;
+            padding: 16px;
+            background-color: #fafafa;
+            border: 1px solid #eeeeee;
+            border-radius: 4px;
+        }
+
+        .info-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f9d58;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #eeeeee;
+            padding-bottom: 4px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            width: 160px;
+            font-weight: 600;
+            color: #666666;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #333333;
+        }
+
+        /* Conditional Alerts Box styling */
+        .alert-box {
+            background-color: #fff9e6;
+            border-left: 4px solid #f3b000;
+            color: #7a5800;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .success-box {
+            background-color: #f0faf5;
+            border-left: 4px solid #0f9d58;
+            color: #0c6b3c;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
         .steps {
             background-color: #fafafa;
             border: 1px solid #eeeeee;
@@ -158,6 +222,70 @@
         <div class="id-card">
             <div class="label">Your Candidate ID</div>
             <div class="value" th:text="${generatedId}">CAN-2026-0001</div>
+        </div>
+
+        <p class="message" style="margin-bottom: 14px; font-weight: 600;">Submitted Registration Profile Summary:</p>
+
+        <!-- SECTION 1: Personal -->
+        <div class="info-section">
+            <div class="info-section-title">Personal</div>
+            <div class="info-row">
+                <div class="info-label">Full Name:</div>
+                <div class="info-value" th:text="${firstName + ' ' + lastName}">John Doe</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Email Address:</div>
+                <div class="info-value" th:text="${email}">john.doe@example.com</div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Education -->
+        <div class="info-section">
+            <div class="info-section-title">Education</div>
+            <div class="info-row">
+                <div class="info-label">Degree:</div>
+                <div class="info-value" th:text="${degree != null && !#strings.isEmpty(degree) ? degree : 'Not Provided'}">B.S.</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Major:</div>
+                <div class="info-value" th:text="${major != null && !#strings.isEmpty(major) ? major : 'Not Provided'}">Computer Science</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">University:</div>
+                <div class="info-value" th:text="${university != null && !#strings.isEmpty(university) ? university : 'Not Provided'}">State University</div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Work Authorization -->
+        <div class="info-section">
+            <div class="info-section-title">Work Authorization</div>
+            <div class="info-row">
+                <div class="info-label">Status:</div>
+                <div class="info-value" th:text="${workAuthorization}">US Citizen</div>
+            </div>
+        </div>
+
+        <!-- Conditional Rule: Trigger note ONLY if status is OPT_EAD -->
+        <div class="alert-box" th:if="${workAuthorization == 'OPT_EAD'}">
+            <strong>Important Note:</strong> Please ensure your EAD document is uploaded to complete your profile.
+        </div>
+
+        <!-- SECTION 4: Preferences -->
+        <div class="info-section">
+            <div class="info-section-title">Preferences</div>
+            <div class="info-row">
+                <div class="info-label">Tools Interested:</div>
+                <div class="info-value" th:text="${toolsInterested != null && !#strings.isEmpty(toolsInterested) ? toolsInterested : 'None Specified'}">Java, Spring Boot</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Accommodation:</div>
+                <div class="info-value" th:text="${needsAccommodation ? 'Requested' : 'No Accommodation Required'}">No Accommodation Required</div>
+            </div>
+        </div>
+
+        <!-- Conditional Rule: Trigger confirmation ONLY if needsAccommodation is true -->
+        <div class="success-box" th:if="${needsAccommodation}">
+            <strong>Accommodation Request Received:</strong> We have noted your request and our HR team will follow up to ensure your technical evaluation or setup parameters align correctly.
         </div>
 
         <!-- What happens next -->
