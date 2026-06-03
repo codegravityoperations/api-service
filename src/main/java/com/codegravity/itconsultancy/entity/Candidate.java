@@ -49,6 +49,21 @@ public class Candidate extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "highest_education", length = 150)
+    private String highestEducation;
+
+    @Column(name = "field_of_study", length = 150)
+    private String fieldOfStudy;
+
+    @Column(name = "work_authorization", length = 100)
+    private String workAuthorization;
+
+    @Column(name = "tools_technologies", columnDefinition = "TEXT")
+    private String toolsTechnologies;
+
+    @Column(name = "accommodation_needed", length = 255)
+    private String accommodationNeeded;
+
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private boolean isActive = true;
