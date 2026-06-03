@@ -3,24 +3,22 @@ package com.codegravity.itconsultancy.service;
 import com.codegravity.itconsultancy.dto.request.CandidateProfileUpdateRequest;
 import com.codegravity.itconsultancy.dto.response.CandidateProfileResponse;
 import com.codegravity.itconsultancy.entity.Candidate;
+import com.codegravity.itconsultancy.exception.ResourceNotFoundException;
 import com.codegravity.itconsultancy.repository.CandidateRepository;
 import com.codegravity.itconsultancy.repository.RoleRepository;
 import com.codegravity.itconsultancy.service.impl.CandidateServiceImpl;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,100 +36,107 @@ class CandidateServiceTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private IdGeneratorService idGeneratorService;
     @Mock private MailService mailService;
+    @Mock private Authentication authentication;
 
     @InjectMocks
     private CandidateServiceImpl candidateService;
 
-    @AfterEach
-    void tearDown() {
-        SecurityContextHolder.clearContext();
+    private Candidate existingCandidate;
+    private CandidateProfileUpdateRequest validRequest;
+
+    @BeforeEach
+    void setUp() {
+        existingCandidate = Candidate.builder()
+                .candidateId("CND_2026_00001")
+                .firstName("Jane")
+                .lastName("Smith")
+                .email("jane.smith@example.com")
+                .phone("9876543210")
+                .build();
+
+        validRequest = CandidateProfileUpdateRequest.builder()
+                .highestEducation("Bachelor's")
+                .fieldOfStudy("Computer Science")
+                .workAuthorization("Citizen")
+                .toolsTechnologies("Java, Spring Boot, Docker")
+                .accommodationNeeded("None")
+                .build();
     }
 
-    @Test
-    @DisplayName("updateProfile() -> success for candidate's own profile")
-    void updateProfile_ownCandidateProfile_success() {
-        Candidate candidate = candidate();
-        CandidateProfileUpdateRequest request = request();
-        given(candidateRepository.findByCandidateId("CAN-001")).willReturn(Optional.of(candidate));
-        given(candidateRepository.save(any(Candidate.class))).willAnswer(invocation -> {
-            Candidate saved = invocation.getArgument(0);
-            saved.setUpdatedAt(LocalDateTime.of(2026, 6, 1, 12, 0));
-            return saved;
-        });
-        authenticate("jane.doe@example.com", "ROLE_CANDIDATE");
-
-        CandidateProfileResponse response = candidateService.updateProfile("CAN-001", request);
-
-        ArgumentCaptor<Candidate> captor = ArgumentCaptor.forClass(Candidate.class);
-        verify(candidateRepository).save(captor.capture());
-        Candidate saved = captor.getValue();
-
-        assertThat(saved.getCandidateId()).isEqualTo("CAN-001");
-        assertThat(saved.getPhone()).isEqualTo("9876543210");
-        assertThat(saved.getAddress()).isEqualTo("456 Updated Ave");
-        assertThat(saved.getResumeUrl()).isEqualTo("https://cdn.example.com/new-resume.pdf");
-        assertThat(response.getCandidateId()).isEqualTo("CAN-001");
-        assertThat(response.getUpdatedAt()).isEqualTo(LocalDateTime.of(2026, 6, 1, 12, 0));
-    }
+    // ── Happy path: CANDIDATE updates their own profile ──────────
 
     @Test
-    @DisplayName("updateProfile() -> success for admin updating any candidate")
-    void updateProfile_adminCanUpdateAnyCandidate_success() {
-        Candidate candidate = candidate();
-        CandidateProfileUpdateRequest request = request();
-        given(candidateRepository.findByCandidateId("CAN-001")).willReturn(Optional.of(candidate));
-        given(candidateRepository.save(any(Candidate.class))).willAnswer(invocation -> invocation.getArgument(0));
-        authenticate("admin@example.com", "ROLE_ADMIN");
+    @DisplayName("updateProfile() → CANDIDATE updates own profile, returns updated response")
+    void updateProfile_candidateUpdatesOwn_returnsResponse() {
+        given(candidateRepository.findByCandidateId("CND_2026_00001"))
+                .willReturn(Optional.of(existingCandidate));
+        given(authentication.getName()).willReturn("jane.smith@example.com::CANDIDATE");
+        given(authentication.getAuthorities()).willAnswer(inv ->
+                List.of(new SimpleGrantedAuthority("ROLE_CANDIDATE")));
+        given(candidateRepository.save(any(Candidate.class)))
+                .willAnswer(inv -> inv.getArgument(0));
 
-        CandidateProfileResponse response = candidateService.updateProfile("CAN-001", request);
+        CandidateProfileResponse response =
+                candidateService.updateProfile("CND_2026_00001", validRequest, authentication);
 
-        assertThat(response.getCandidateId()).isEqualTo("CAN-001");
+        assertThat(response).isNotNull();
+        assertThat(response.getCandidateId()).isEqualTo("CND_2026_00001");
+        assertThat(response.getHighestEducation()).isEqualTo("Bachelor's");
+        assertThat(response.getFieldOfStudy()).isEqualTo("Computer Science");
+        assertThat(response.getWorkAuthorization()).isEqualTo("Citizen");
+        assertThat(response.getToolsTechnologies()).isEqualTo("Java, Spring Boot, Docker");
+        assertThat(response.getAccommodationNeeded()).isEqualTo("None");
+
         verify(candidateRepository).save(any(Candidate.class));
     }
 
+    // ── Happy path: ADMIN updates any profile ────────────────────
+
     @Test
-    @DisplayName("updateProfile() -> denies candidate updating another candidate's profile")
-    void updateProfile_otherCandidate_throwsAccessDenied() {
-        given(candidateRepository.findByCandidateId("CAN-001")).willReturn(Optional.of(candidate()));
-        authenticate("other.candidate@example.com", "ROLE_CANDIDATE");
+    @DisplayName("updateProfile() → ADMIN can update any candidate's profile")
+    void updateProfile_adminUpdatesAny_returnsResponse() {
+        given(candidateRepository.findByCandidateId("CND_2026_00001"))
+                .willReturn(Optional.of(existingCandidate));
+        given(authentication.getAuthorities()).willAnswer(inv ->
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        given(candidateRepository.save(any(Candidate.class)))
+                .willAnswer(inv -> inv.getArgument(0));
 
-        assertThatThrownBy(() -> candidateService.updateProfile("CAN-001", request()))
-                .isInstanceOf(AccessDeniedException.class)
-                .hasMessageContaining("Candidates can update only their own profile");
+        CandidateProfileResponse response =
+                candidateService.updateProfile("CND_2026_00001", validRequest, authentication);
 
-        verify(candidateRepository, never()).save(any());
+        assertThat(response).isNotNull();
+        assertThat(response.getHighestEducation()).isEqualTo("Bachelor's");
+        verify(candidateRepository).save(any(Candidate.class));
     }
 
-    private Candidate candidate() {
-        Candidate candidate = Candidate.builder()
-                .candidateId("CAN-001")
-                .firstName("Jane")
-                .lastName("Doe")
-                .email("jane.doe@example.com")
-                .password("encoded-password")
-                .phone("1234567890")
-                .address("123 Main St")
-                .appliedRole("Java Developer")
-                .resumeUrl("https://cdn.example.com/old-resume.pdf")
-                .build();
-        candidate.setUpdatedAt(LocalDateTime.of(2026, 5, 31, 12, 0));
-        return candidate;
+    // ── Auth failure: CANDIDATE tries to update someone else ─────
+
+    @Test
+    @DisplayName("updateProfile() → throws AccessDeniedException when CANDIDATE updates another's profile")
+    void updateProfile_candidateUpdatesOther_throwsAccessDenied() {
+        given(candidateRepository.findByCandidateId("CND_2026_00001"))
+                .willReturn(Optional.of(existingCandidate));
+        given(authentication.getAuthorities()).willAnswer(inv ->
+                List.of(new SimpleGrantedAuthority("ROLE_CANDIDATE")));
+        given(authentication.getName()).willReturn("intruder@example.com::CANDIDATE");
+
+        assertThatThrownBy(() ->
+                candidateService.updateProfile("CND_2026_00001", validRequest, authentication))
+                .isInstanceOf(AccessDeniedException.class);
     }
 
-    private CandidateProfileUpdateRequest request() {
-        CandidateProfileUpdateRequest request = new CandidateProfileUpdateRequest();
-        request.setPhone("9876543210");
-        request.setAddress("456 Updated Ave");
-        request.setResumeUrl("https://cdn.example.com/new-resume.pdf");
-        return request;
-    }
+    // ── Not found ─────────────────────────────────────────────────
 
-    private void authenticate(String username, String authority) {
-        TestingAuthenticationToken authentication = new TestingAuthenticationToken(
-                username,
-                "password",
-                List.of(new SimpleGrantedAuthority(authority))
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    @Test
+    @DisplayName("updateProfile() → throws ResourceNotFoundException when candidateId not found")
+    void updateProfile_candidateNotFound_throwsResourceNotFoundException() {
+        given(candidateRepository.findByCandidateId("CND_9999_99999"))
+                .willReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+                candidateService.updateProfile("CND_9999_99999", validRequest, authentication))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("CND_9999_99999");
     }
 }

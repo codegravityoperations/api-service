@@ -87,14 +87,15 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
-    // ─── Access denied ────────────────────────────────────────────
+    // ─── Access denied (filter-chain level) ──────────────────────
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AuthorizationDeniedException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleAuthorizationDenied(AuthorizationDeniedException ex) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(ApiResponse.error("Access denied"));
     }
 
+    // ─── Access denied (service-layer ownership check) ───────────
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity
