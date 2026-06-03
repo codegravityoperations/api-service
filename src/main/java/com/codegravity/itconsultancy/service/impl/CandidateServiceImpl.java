@@ -130,6 +130,9 @@ public class CandidateServiceImpl implements CandidateService {
             }
         }
 
+        candidate.setPhone(request.getPhone());
+        candidate.setAddress(request.getAddress());
+        candidate.setResumeUrl(request.getResumeUrl());
         candidate.setHighestEducation(request.getHighestEducation());
         candidate.setFieldOfStudy(request.getFieldOfStudy());
         candidate.setWorkAuthorization(request.getWorkAuthorization());
@@ -172,6 +175,7 @@ public class CandidateServiceImpl implements CandidateService {
                 .accommodationNeeded(c.getAccommodationNeeded())
                 .status(c.getStatus())
                 .active(c.isActive())
+                .updatedAt(c.getUpdatedAt())
                 .build();
     }
 }

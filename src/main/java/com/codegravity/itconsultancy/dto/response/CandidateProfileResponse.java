@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -24,7 +26,6 @@ public class CandidateProfileResponse {
     private String resumeUrl;
     private String notes;
 
-    // V3 profile fields
     private String highestEducation;
     private String fieldOfStudy;
     private String workAuthorization;
@@ -33,4 +34,5 @@ public class CandidateProfileResponse {
 
     private UserStatus status;
     private boolean active;
+    private LocalDateTime updatedAt;
 }
