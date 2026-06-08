@@ -1,6 +1,8 @@
 package com.codegravity.itconsultancy.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +16,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CandidateProfileUpdateRequest {
+
+    @NotBlank(message = "Phone is required")
+    @Pattern(regexp = "^[+]?[0-9]{7,15}$", message = "Invalid phone number")
+    private String phone;
+
+    @Size(max = 255, message = "Address must not exceed 255 characters")
+    private String address;
+
+    @Size(max = 500, message = "Resume URL must not exceed 500 characters")
+    private String resumeUrl;
 
     @NotNull(message = "Highest education is required")
     @Size(max = 150, message = "Highest education must not exceed 150 characters")

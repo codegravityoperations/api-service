@@ -106,6 +106,9 @@ class CandidateProfileIntegrationTest {
 
         // ── 3. PUT /api/candidates/{id}/profile ───────────────────────
         Map<String, String> profileBody = Map.of(
+                "phone", "5551234567",
+                "address", "456 Integration Ave",
+                "resumeUrl", "https://s3.example.com/resume.pdf",
                 "highestEducation", "Master's",
                 "fieldOfStudy", "Software Engineering",
                 "workAuthorization", "Citizen",
@@ -125,11 +128,15 @@ class CandidateProfileIntegrationTest {
         // ── 4. Verify database state ──────────────────────────────────
         Candidate saved = candidateRepository.findByCandidateId(candidateId).orElseThrow();
 
+        assertThat(saved.getPhone()).isEqualTo("5551234567");
+        assertThat(saved.getAddress()).isEqualTo("456 Integration Ave");
+        assertThat(saved.getResumeUrl()).isEqualTo("https://s3.example.com/resume.pdf");
         assertThat(saved.getHighestEducation()).isEqualTo("Master's");
         assertThat(saved.getFieldOfStudy()).isEqualTo("Software Engineering");
         assertThat(saved.getWorkAuthorization()).isEqualTo("Citizen");
         assertThat(saved.getToolsTechnologies()).isEqualTo("Java, Spring Boot, Kubernetes");
         assertThat(saved.getAccommodationNeeded()).isEqualTo("Remote work");
+        assertThat(saved.getUpdatedAt()).isNotNull();
     }
 
     @Test
@@ -180,9 +187,57 @@ class CandidateProfileIntegrationTest {
                         .header("Authorization", "Bearer " + attackerToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
+                                "phone", "5559990001",
                                 "highestEducation", "Injected",
                                 "workAuthorization", "None",
                                 "toolsTechnologies", "Hacking tools"))))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("PUT /profile with missing required fields → 400 with field-level errors")
+    void updateProfile_missingRequiredFields_returns400() throws Exception {
+
+        Map<String, String> registerBody = Map.of(
+                "firstName", "Validation", "lastName", "Tester",
+                "email", "validation.tester@example.com",
+                "password", "SecurePass123!", "phone", "5550000001"
+        );
+
+        String registerJson = mockMvc.perform(post("/api/candidates/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerBody)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        @SuppressWarnings("unchecked")
+        String candidateId = (String)
+                ((Map<String, Object>) objectMapper.readValue(registerJson, Map.class).get("data"))
+                        .get("generatedId");
+
+        String loginJson = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "email", "validation.tester@example.com",
+                                "password", "SecurePass123!",
+                                "userType", "CANDIDATE"))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        @SuppressWarnings("unchecked")
+        String token = (String)
+                ((Map<String, Object>) objectMapper.readValue(loginJson, Map.class).get("data"))
+                        .get("accessToken");
+
+        // Send request with invalid phone and missing required fields
+        mockMvc.perform(put("/api/candidates/" + candidateId + "/profile")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "phone", "NOT-A-PHONE"   // fails @Pattern; omits other @NotNull fields
+                        ))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.data").isMap());
     }
 }

@@ -7,6 +7,9 @@ import com.codegravity.itconsultancy.exception.ResourceNotFoundException;
 import com.codegravity.itconsultancy.repository.CandidateRepository;
 import com.codegravity.itconsultancy.repository.RoleRepository;
 import com.codegravity.itconsultancy.service.impl.CandidateServiceImpl;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -55,6 +59,9 @@ class CandidateServiceTest {
                 .build();
 
         validRequest = CandidateProfileUpdateRequest.builder()
+                .phone("9876543210")
+                .address("123 Main Street, Springfield")
+                .resumeUrl("https://s3.example.com/resumes/jane-smith.pdf")
                 .highestEducation("Bachelor's")
                 .fieldOfStudy("Computer Science")
                 .workAuthorization("Citizen")
@@ -81,6 +88,9 @@ class CandidateServiceTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getCandidateId()).isEqualTo("CND_2026_00001");
+        assertThat(response.getPhone()).isEqualTo("9876543210");
+        assertThat(response.getAddress()).isEqualTo("123 Main Street, Springfield");
+        assertThat(response.getResumeUrl()).isEqualTo("https://s3.example.com/resumes/jane-smith.pdf");
         assertThat(response.getHighestEducation()).isEqualTo("Bachelor's");
         assertThat(response.getFieldOfStudy()).isEqualTo("Computer Science");
         assertThat(response.getWorkAuthorization()).isEqualTo("Citizen");
@@ -138,5 +148,45 @@ class CandidateServiceTest {
                 candidateService.updateProfile("CND_9999_99999", validRequest, authentication))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("CND_9999_99999");
+    }
+
+    // ── Invalid data: bean validation on request DTO ──────────────
+
+    @Test
+    @DisplayName("CandidateProfileUpdateRequest → missing required fields fail bean validation")
+    void updateRequest_missingRequiredFields_failsValidation() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+        CandidateProfileUpdateRequest invalid = CandidateProfileUpdateRequest.builder()
+                .phone("INVALID")          // fails @Pattern
+                .highestEducation(null)    // fails @NotNull
+                .workAuthorization(null)   // fails @NotNull
+                .toolsTechnologies(null)   // fails @NotNull
+                .build();
+
+        Set<ConstraintViolation<CandidateProfileUpdateRequest>> violations = validator.validate(invalid);
+
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.stream().map(v -> v.getPropertyPath().toString()))
+                .containsAnyOf("phone", "highestEducation", "workAuthorization", "toolsTechnologies");
+    }
+
+    @Test
+    @DisplayName("CandidateProfileUpdateRequest → blank phone fails bean validation")
+    void updateRequest_blankPhone_failsValidation() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+        CandidateProfileUpdateRequest invalid = CandidateProfileUpdateRequest.builder()
+                .phone("")
+                .highestEducation("Bachelor's")
+                .workAuthorization("Citizen")
+                .toolsTechnologies("Java")
+                .build();
+
+        Set<ConstraintViolation<CandidateProfileUpdateRequest>> violations = validator.validate(invalid);
+
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.stream().map(v -> v.getPropertyPath().toString()))
+                .contains("phone");
     }
 }
