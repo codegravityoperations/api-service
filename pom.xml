@@ -22,7 +22,6 @@
 		<java.version>21</java.version>
 		<jjwt.version>0.12.6</jjwt.version>
 		<springdoc.version>3.0.2</springdoc.version>
-		<lombok.version>1.18.44</lombok.version>
 	</properties>
 
 	<dependencies>
@@ -86,7 +85,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -149,7 +147,16 @@
 			<version>1.21.4</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+
+        <!-- AWS S3 SDK -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.32.12</version>
+        </dependency>
+
+
+    </dependencies>
 
 	<build>
 		<plugins>
@@ -178,7 +185,6 @@
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
-									<version>${lombok.version}</version>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
@@ -192,7 +198,6 @@
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
-									<version>${lombok.version}</version>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
