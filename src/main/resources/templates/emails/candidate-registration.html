@@ -279,12 +279,12 @@
             </div>
             <div class="info-row">
                 <div class="info-label">Accommodation:</div>
-                <div class="info-value" th:text="${needsAccommodation ? 'Requested' : 'No Accommodation Required'}">No Accommodation Required</div>
+                <div class="info-value" th:text="${needsAccommodation != null and needsAccommodation ? 'Requested' : 'No Accommodation Required'}">No Accommodation Required</div>
             </div>
         </div>
 
         <!-- Conditional Rule: Trigger confirmation ONLY if needsAccommodation is true -->
-        <div class="success-box" th:if="${needsAccommodation}">
+        <div class="success-box" th:if="${needsAccommodation != null and needsAccommodation}">
             <strong>Accommodation Request Received:</strong> We have noted your request and our HR team will follow up to ensure your technical evaluation or setup parameters align correctly.
         </div>
 

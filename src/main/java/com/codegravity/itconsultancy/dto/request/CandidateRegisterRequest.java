@@ -35,4 +35,9 @@ public class CandidateRegisterRequest {
     private String appliedRole;
     private String resumeUrl;
     private String notes;
+    private String highestEducation;
+    private String fieldOfStudy;
+    private String workAuthorization;
+    private String toolsTechnologies;
+    private String accommodationNeeded;
 }
