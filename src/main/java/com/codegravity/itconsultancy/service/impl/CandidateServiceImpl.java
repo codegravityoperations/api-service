@@ -67,6 +67,11 @@ public class CandidateServiceImpl implements CandidateService {
                 .appliedRole(request.getAppliedRole())
                 .resumeUrl(request.getResumeUrl())
                 .notes(request.getNotes())
+                .highestEducation(request.getHighestEducation())
+                .fieldOfStudy(request.getFieldOfStudy())
+                .workAuthorization(request.getWorkAuthorization())
+                .toolsTechnologies(request.getToolsTechnologies())
+                .accommodationNeeded(request.getAccommodationNeeded())
                 .isActive(true)
                 .roles(Set.of(candidateRole))
                 .build();

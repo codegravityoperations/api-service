@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         Role role;
         String businessId;
 
-        if (userType == UserType.EMPLOYEE) {
+        if (userType == UserType.EMPLOYEE || userType == UserType.ADMIN) {
             Employee employee = employeeRepository.findByEmail(email)
                     .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + email));
             role = employee.getRoles().stream()
