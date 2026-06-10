@@ -201,13 +201,11 @@
 <body>
 <div class="wrapper">
 
-    <!-- Header -->
     <div class="header">
         <h1>IT Consultancy</h1>
         <p>Candidate Portal</p>
     </div>
 
-    <!-- Body -->
     <div class="body">
 
         <p class="greeting">Hi <span th:text="${firstName}">Candidate</span>, your application is in!</p>
@@ -218,7 +216,6 @@
             below — you will need it to track your application status.
         </p>
 
-        <!-- ID Card -->
         <div class="id-card">
             <div class="label">Your Candidate ID</div>
             <div class="value" th:text="${generatedId}">CAN-2026-0001</div>
@@ -226,7 +223,6 @@
 
         <p class="message" style="margin-bottom: 14px; font-weight: 600;">Submitted Registration Profile Summary:</p>
 
-        <!-- SECTION 1: Personal -->
         <div class="info-section">
             <div class="info-section-title">Personal</div>
             <div class="info-row">
@@ -239,7 +235,6 @@
             </div>
         </div>
 
-        <!-- SECTION 2: Education -->
         <div class="info-section">
             <div class="info-section-title">Education</div>
             <div class="info-row">
@@ -256,21 +251,18 @@
             </div>
         </div>
 
-        <!-- SECTION 3: Work Authorization -->
         <div class="info-section">
             <div class="info-section-title">Work Authorization</div>
             <div class="info-row">
                 <div class="info-label">Status:</div>
-                <div class="info-value" th:text="${workAuthorization}">US Citizen</div>
+                <div class="info-value" th:text="${workAuthorization != null && !#strings.isEmpty(workAuthorization) ? workAuthorization : 'Not Provided'}">US Citizen</div>
             </div>
         </div>
 
-        <!-- Conditional Rule: Trigger note ONLY if status is OPT_EAD -->
         <div class="alert-box" th:if="${workAuthorization == 'OPT_EAD'}">
             <strong>Important Note:</strong> Please ensure your EAD document is uploaded to complete your profile.
         </div>
 
-        <!-- SECTION 4: Preferences -->
         <div class="info-section">
             <div class="info-section-title">Preferences</div>
             <div class="info-row">
@@ -279,16 +271,19 @@
             </div>
             <div class="info-row">
                 <div class="info-label">Accommodation:</div>
-                <div class="info-value" th:text="${needsAccommodation != null and needsAccommodation ? 'Requested' : 'No Accommodation Required'}">No Accommodation Required</div>
             </div>
         </div>
 
         <!-- Conditional Rule: Trigger confirmation ONLY if needsAccommodation is true -->
         <div class="success-box" th:if="${needsAccommodation != null and needsAccommodation}">
+                <div class="info-value" th:text="${needsAccommodation != null && needsAccommodation ? 'Requested' : 'No Accommodation Required'}">No Accommodation Required</div>
+            </div>
+        </div>
+
+        <div class="success-box" th:if="${needsAccommodation != null && needsAccommodation}">
             <strong>Accommodation Request Received:</strong> We have noted your request and our HR team will follow up to ensure your technical evaluation or setup parameters align correctly.
         </div>
 
-        <!-- What happens next -->
         <div class="steps">
             <p class="step-title">What happens next?</p>
             <ol>
@@ -307,7 +302,6 @@
 
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p class="company">IT Consultancy Platform</p>
         <p>This is an automated message — please do not reply to this email.</p>
