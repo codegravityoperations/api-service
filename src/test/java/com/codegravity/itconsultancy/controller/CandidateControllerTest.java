@@ -63,14 +63,17 @@ class CandidateControllerTest {
         Map<String, String> requestBody = Map.of(
                 "phone", "1234567890",
                 "address", "123 Main St",
-                "resumeUrl", "https://cdn.example.com/resume.pdf"
+                "resumeUrl", "https://cdn.example.com/resume.pdf",
+                "highestEducation", "Bachelor of Science",
+                "workAuthorization", "US Citizen",
+                "toolsTechnologies", "Java, Spring Boot"
         );
 
         mockMvc.perform(put("/api/candidates/CAN-001/profile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBody)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Candidate profile updated successfully"))
+                .andExpect(jsonPath("$.message").value("Profile updated successfully"))
                 .andExpect(jsonPath("$.data.candidateId").value("CAN-001"))
                 .andExpect(jsonPath("$.data.phone").value("1234567890"))
                 .andExpect(jsonPath("$.data.resumeUrl").value("https://cdn.example.com/resume.pdf"))
