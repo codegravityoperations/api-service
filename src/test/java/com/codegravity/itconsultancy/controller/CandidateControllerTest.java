@@ -94,7 +94,7 @@ class CandidateControllerTest {
                         .content(objectMapper.writeValueAsString(requestBody)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
-                .andExpect(jsonPath("$.data.phone").value("Phone is required"))
+                .andExpect(jsonPath("$.data.phone").value("Invalid phone number"))
                 .andExpect(jsonPath("$.data.address").value("Address must not exceed 255 characters"))
                 .andExpect(jsonPath("$.data.resumeUrl").value("Resume URL must not exceed 500 characters"));
     }
