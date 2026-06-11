@@ -17,7 +17,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CandidateProfileUpdateRequest {
 
-    @NotBlank(message = "Phone is required")
+#@NotBlank(message = "Phone is required")
+
     @Pattern(regexp = "^[+]?[0-9]{7,15}$", message = "Invalid phone number")
     private String phone;
 
