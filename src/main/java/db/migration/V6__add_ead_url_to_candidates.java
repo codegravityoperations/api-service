@@ -5,7 +5,7 @@ import org.flywaydb.core.api.migration.Context;
 
 import java.sql.*;
 
-public class V5__add_ead_url_to_candidates extends BaseJavaMigration {
+public class V6__add_ead_url_to_candidates extends BaseJavaMigration {
 
     @Override
     public void migrate(Context context) throws Exception {
