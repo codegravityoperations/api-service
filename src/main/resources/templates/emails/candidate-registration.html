@@ -3,164 +3,201 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Application Received — IT Consultancy</title>
+    <title>Application Received — Code Gravity</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f4f6f9;
+            background-color: #f0f4f8;
             color: #333333;
         }
 
         .wrapper {
-            max-width: 600px;
+            max-width: 620px;
             margin: 40px auto;
             background-color: #ffffff;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
         }
 
+        /* ── Header ── */
         .header {
-            background-color: #0f9d58;
-            padding: 36px 40px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            padding: 40px 40px 32px;
             text-align: center;
+        }
+
+        .header .brand {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #7ec8e3;
+            margin-bottom: 10px;
         }
 
         .header h1 {
             color: #ffffff;
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+        }
+
+        .header .gravity-dot {
+            color: #4fc3f7;
         }
 
         .header p {
-            color: #c8f0dc;
+            color: #90caf9;
             font-size: 13px;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
+        .badge {
+            display: inline-block;
+            background-color: #4fc3f7;
+            color: #0d1b2a;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 14px;
+        }
+
+        /* ── Body ── */
         .body {
             padding: 40px;
         }
 
         .greeting {
-            font-size: 18px;
+            font-size: 19px;
             font-weight: 600;
-            margin-bottom: 16px;
-            color: #1a1a1a;
+            margin-bottom: 14px;
+            color: #1a1a2e;
         }
 
         .message {
             font-size: 15px;
-            line-height: 1.7;
+            line-height: 1.75;
             color: #555555;
             margin-bottom: 28px;
         }
 
+        /* ── Candidate ID card ── */
         .id-card {
-            background-color: #f0faf5;
-            border-left: 4px solid #0f9d58;
-            border-radius: 4px;
+            background: linear-gradient(135deg, #e8f4fd, #dbeafe);
+            border-left: 5px solid #1565c0;
+            border-radius: 6px;
             padding: 20px 24px;
-            margin-bottom: 28px;
+            margin-bottom: 10px;
         }
 
         .id-card .label {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #888888;
+            letter-spacing: 1.5px;
+            color: #5c7aa0;
             margin-bottom: 6px;
         }
 
         .id-card .value {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            color: #0f9d58;
-            letter-spacing: 1px;
+            color: #1565c0;
+            letter-spacing: 1.5px;
         }
 
-        /* Grouped Details Styling */
-        .info-section {
-            margin-bottom: 24px;
-            padding: 16px;
-            background-color: #fafafa;
-            border: 1px solid #eeeeee;
-            border-radius: 4px;
-        }
-
-        .info-section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #0f9d58;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid #eeeeee;
-            padding-bottom: 4px;
-        }
-
-        .info-row {
+        /* ── Submission date ── */
+        .meta-row {
             display: flex;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .info-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .info-label {
-            width: 160px;
-            font-weight: 600;
-            color: #666666;
-        }
-
-        .info-value {
-            flex: 1;
-            color: #333333;
-        }
-
-        /* Conditional Alerts Box styling */
-        .alert-box {
-            background-color: #fff9e6;
-            border-left: 4px solid #f3b000;
-            color: #7a5800;
-            padding: 14px 18px;
-            margin-bottom: 24px;
-            border-radius: 4px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .success-box {
-            background-color: #f0faf5;
-            border-left: 4px solid #0f9d58;
-            color: #0c6b3c;
-            padding: 14px 18px;
-            margin-bottom: 24px;
-            border-radius: 4px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .steps {
-            background-color: #fafafa;
-            border: 1px solid #eeeeee;
-            border-radius: 4px;
-            padding: 20px 24px;
+            align-items: center;
+            gap: 8px;
             margin-bottom: 28px;
         }
 
-        .steps .step-title {
-            font-size: 13px;
+        .meta-row .meta-label {
+            font-size: 12px;
+            color: #888888;
+        }
+
+        .meta-row .meta-value {
+            font-size: 12px;
             font-weight: 600;
-            color: #333333;
-            margin-bottom: 12px;
+            color: #444444;
+        }
+
+        /* ── Document upload status ── */
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #888888;
+            margin-bottom: 12px;
+        }
+
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .doc-table th {
+            background-color: #f5f7fa;
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #888888;
+            border-bottom: 2px solid #e8ecf0;
+        }
+
+        .doc-table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #f0f2f5;
+            color: #444444;
+        }
+
+        .doc-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-uploaded {
+            display: inline-block;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .status-not-provided {
+            display: inline-block;
+            background-color: #fafafa;
+            color: #aaaaaa;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* ── Next steps ── */
+        .steps {
+            background-color: #f9fafb;
+            border: 1px solid #e8ecf0;
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
         }
 
         .steps ol {
@@ -170,142 +207,131 @@
         .steps ol li {
             font-size: 14px;
             color: #555555;
-            line-height: 1.8;
+            line-height: 1.85;
         }
 
         .divider {
             border: none;
-            border-top: 1px solid #eeeeee;
+            border-top: 1px solid #eef0f3;
             margin: 28px 0;
         }
 
+        /* ── Footer ── */
         .footer {
-            background-color: #f9f9f9;
-            padding: 24px 40px;
+            background-color: #1a1a2e;
+            padding: 26px 40px;
             text-align: center;
-            border-top: 1px solid #eeeeee;
-        }
-
-        .footer p {
-            font-size: 12px;
-            color: #aaaaaa;
-            line-height: 1.6;
         }
 
         .footer .company {
-            font-weight: 600;
-            color: #888888;
+            font-size: 13px;
+            font-weight: 700;
+            color: #7ec8e3;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .footer p {
+            font-size: 11px;
+            color: #607d99;
+            line-height: 1.7;
         }
     </style>
 </head>
 <body>
 <div class="wrapper">
 
+    <!-- ── Header ────────────────────────────────────── -->
     <div class="header">
-        <h1>IT Consultancy</h1>
-        <p>Candidate Portal</p>
+        <div class="brand">IT Consultancy Platform</div>
+        <h1>Code<span class="gravity-dot"> Gravity</span></h1>
+        <p>Candidate Confirmation</p>
+        <div class="badge">Application Received</div>
     </div>
 
+    <!-- ── Body ─────────────────────────────────────── -->
     <div class="body">
 
-        <p class="greeting">Hi <span th:text="${firstName}">Candidate</span>, your application is in!</p>
+        <p class="greeting">Hi <span th:text="${firstName}">Candidate</span>,</p>
 
         <p class="message">
-            Thank you for registering with IT Consultancy. Your candidate profile has been
-            created and your application is now under review. Please save your Candidate ID
-            below — you will need it to track your application status.
+            Thank you for submitting your consultant intake form with
+            <strong>Code Gravity IT Consultancy</strong>. We have successfully received
+            your application. Please keep your unique Candidate ID safe — you will need
+            it to track your application status.
         </p>
 
+        <!-- Candidate ID -->
         <div class="id-card">
             <div class="label">Your Candidate ID</div>
             <div class="value" th:text="${generatedId}">CAN-2026-0001</div>
         </div>
 
-        <p class="message" style="margin-bottom: 14px; font-weight: 600;">Submitted Registration Profile Summary:</p>
-
-        <div class="info-section">
-            <div class="info-section-title">Personal</div>
-            <div class="info-row">
-                <div class="info-label">Full Name:</div>
-                <div class="info-value" th:text="${firstName + ' ' + lastName}">John Doe</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Email Address:</div>
-                <div class="info-value" th:text="${email}">john.doe@example.com</div>
-            </div>
+        <!-- Submission date -->
+        <div class="meta-row">
+            <span class="meta-label">Submitted on:</span>
+            <span class="meta-value" th:text="${submissionDate}">May 24, 2026</span>
         </div>
 
-        <div class="info-section">
-            <div class="info-section-title">Education</div>
-            <div class="info-row">
-                <div class="info-label">Degree:</div>
-                <div class="info-value" th:text="${degree != null && !#strings.isEmpty(degree) ? degree : 'Not Provided'}">B.S.</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Major:</div>
-                <div class="info-value" th:text="${major != null && !#strings.isEmpty(major) ? major : 'Not Provided'}">Computer Science</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">University:</div>
-                <div class="info-value" th:text="${university != null && !#strings.isEmpty(university) ? university : 'Not Provided'}">State University</div>
-            </div>
-        </div>
+        <!-- Document upload status -->
+        <p class="section-title">Document Upload Status</p>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Document</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Resume / CV</td>
+                    <td>
+                        <span th:if="${resumeUploaded}"         class="status-uploaded">✓ Uploaded</span>
+                        <span th:unless="${resumeUploaded}"     class="status-not-provided">Not Provided</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Employment Authorization Document (EAD)</td>
+                    <td>
+                        <span th:if="${eadUploaded}"            class="status-uploaded">✓ Uploaded</span>
+                        <span th:unless="${eadUploaded}"        class="status-not-provided">Not Provided</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Driving License</td>
+                    <td>
+                        <span th:if="${drivingLicenseUploaded}" class="status-uploaded">✓ Uploaded</span>
+                        <span th:unless="${drivingLicenseUploaded}" class="status-not-provided">Not Provided</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-        <div class="info-section">
-            <div class="info-section-title">Work Authorization</div>
-            <div class="info-row">
-                <div class="info-label">Status:</div>
-                <div class="info-value" th:text="${workAuthorization != null && !#strings.isEmpty(workAuthorization) ? workAuthorization : 'Not Provided'}">US Citizen</div>
-            </div>
-        </div>
-
-        <div class="alert-box" th:if="${workAuthorization == 'OPT_EAD'}">
-            <strong>Important Note:</strong> Please ensure your EAD document is uploaded to complete your profile.
-        </div>
-
-        <div class="info-section">
-            <div class="info-section-title">Preferences</div>
-            <div class="info-row">
-                <div class="info-label">Tools Interested:</div>
-                <div class="info-value" th:text="${toolsInterested != null && !#strings.isEmpty(toolsInterested) ? toolsInterested : 'None Specified'}">Java, Spring Boot</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Accommodation:</div>
-            </div>
-        </div>
-
-        <!-- Conditional Rule: Trigger confirmation ONLY if needsAccommodation is true -->
-        <div class="success-box" th:if="${needsAccommodation != null and needsAccommodation}">
-                <div class="info-value" th:text="${needsAccommodation != null && needsAccommodation ? 'Requested' : 'No Accommodation Required'}">No Accommodation Required</div>
-            </div>
-        </div>
-
-        <div class="success-box" th:if="${needsAccommodation != null && needsAccommodation}">
-            <strong>Accommodation Request Received:</strong> We have noted your request and our HR team will follow up to ensure your technical evaluation or setup parameters align correctly.
-        </div>
-
+        <!-- What happens next -->
+        <p class="section-title">What happens next?</p>
         <div class="steps">
-            <p class="step-title">What happens next?</p>
             <ol>
-                <li>Our team will review your profile within 3–5 business days.</li>
-                <li>If shortlisted, you will be contacted via your registered email.</li>
-                <li>You can log in to the candidate portal to check your application status.</li>
+                <li>Our team will review your profile within <strong>3–5 business days</strong>.</li>
+                <li>If shortlisted, you will be contacted at your registered email address.</li>
+                <li>You can log in to the candidate portal at any time to check your status.</li>
+                <li>Missing documents can be uploaded via your profile page before the review closes.</li>
             </ol>
         </div>
 
         <hr class="divider"/>
 
-        <p class="message" style="font-size: 13px; color: #888888;">
-            If you did not submit this application, please contact us immediately at
-            <strong>support@itconsultancy.com</strong>.
+        <p class="message" style="font-size: 13px; color: #999999;">
+            Didn't submit this application? Contact us immediately at
+            <strong>support@codegravity.com</strong> so we can investigate.
         </p>
 
     </div>
 
+    <!-- ── Footer ────────────────────────────────────── -->
     <div class="footer">
-        <p class="company">IT Consultancy Platform</p>
-        <p>This is an automated message — please do not reply to this email.</p>
-        <p>&copy; 2026 IT Consultancy. All rights reserved.</p>
+        <p class="company">Code Gravity IT Consultancy</p>
+        <p>This is an automated message — please do not reply directly to this email.</p>
+        <p>&copy; 2026 Code Gravity. All rights reserved.</p>
     </div>
 
 </div>

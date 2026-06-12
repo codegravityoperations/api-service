@@ -34,6 +34,13 @@ public class CandidateRegisterRequest {
     private String address;
     private String appliedRole;
     private String resumeUrl;
+
+    /** Employment Authorization Document URL — optional upload. */
+    private String eadUrl;
+
+    /** Driving license document URL — optional upload. */
+    private String drivingLicenseUrl;
+
     private String notes;
     private String highestEducation;
     private String fieldOfStudy;

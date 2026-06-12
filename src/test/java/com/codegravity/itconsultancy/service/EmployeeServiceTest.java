@@ -1,6 +1,7 @@
 package com.codegravity.itconsultancy.service;
 
 import com.codegravity.itconsultancy.dto.request.EmployeeRegisterRequest;
+import com.codegravity.itconsultancy.dto.request.RegistrationEmailRequest;
 import com.codegravity.itconsultancy.dto.response.RegistrationResponse;
 import com.codegravity.itconsultancy.entity.Employee;
 import com.codegravity.itconsultancy.entity.RoleEntity;
@@ -77,7 +78,7 @@ class EmployeeServiceTest {
         given(roleRepository.findByName(Role.ROLE_EMPLOYEE)).willReturn(Optional.of(employeeRole));
         given(passwordEncoder.encode(anyString())).willReturn("encoded-password");
         given(employeeRepository.save(any(Employee.class))).willAnswer(inv -> inv.getArgument(0));
-        given(mailService.sendRegistrationEmail(anyString(), anyString(), any(), anyString()))
+        given(mailService.sendRegistrationEmail(any(RegistrationEmailRequest.class)))
                 .willReturn(EmailStatus.SENT);
 
         // WHEN — call the real method
@@ -107,7 +108,7 @@ class EmployeeServiceTest {
 
         // Critical: verify save() was NEVER called — no partial state
         verify(employeeRepository, never()).save(any());
-        verify(mailService, never()).sendRegistrationEmail(any(), any(), any(), any());
+        verify(mailService, never()).sendRegistrationEmail(any(RegistrationEmailRequest.class));
     }
 
     @Test
