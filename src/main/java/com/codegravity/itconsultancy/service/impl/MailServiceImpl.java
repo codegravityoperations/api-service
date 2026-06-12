@@ -30,18 +30,32 @@ public class MailServiceImpl implements MailService {
     @Override
     public EmailStatus sendRegistrationEmail(String toEmail,
                                              String firstName,
+                                             String lastName, // 👈 Added parameter here
                                              UserType userType,
-                                             String generatedId) {
+                                             String generatedId,
+                                             String degree,
+                                             String major,
+                                             String university,
+                                             String workAuthorization,
+                                             Boolean needsAccommodation,
+                                             String tools) {
 
         String template = userType == UserType.EMPLOYEE
                 ? AppConstants.EMAIL_TEMPLATE_EMPLOYEE
                 : AppConstants.EMAIL_TEMPLATE_CANDIDATE;
 
-        // Build Thymeleaf context
         Context context = new Context();
         context.setVariable("firstName", firstName);
+        context.setVariable("lastName", lastName); // 🚀 Injected here so Thymeleaf can render it
         context.setVariable("generatedId", generatedId);
         context.setVariable("userType", userType.name());
+        context.setVariable("degree", degree);
+        context.setVariable("major", major);
+        context.setVariable("university", university);
+        context.setVariable("workAuthorization", workAuthorization);
+        context.setVariable("needsAccommodation", needsAccommodation);
+        context.setVariable("email", toEmail);
+        context.setVariable("toolsInterested", tools);
 
         String htmlBody = templateEngine.process(template, context);
 
@@ -65,7 +79,6 @@ public class MailServiceImpl implements MailService {
             log.error("Failed to send registration email to {} | reason: {}", toEmail, errorMsg);
         }
 
-        // Always log regardless of outcome
         MailLog mailLog = MailLog.builder()
                 .recipient(toEmail)
                 .subject(AppConstants.REGISTRATION_EMAIL_SUBJECT)

@@ -60,11 +60,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
         log.info("Employee registered: {} | id: {}", request.getEmail(), generatedId);
 
+        // Fixed here by appending 5 null values to match the upgraded method signature
         EmailStatus emailStatus = mailService.sendRegistrationEmail(
                 request.getEmail(),
                 request.getFirstName(),
+                request.getLastName(),
                 UserType.EMPLOYEE,
-                generatedId
+                generatedId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
 
         return RegistrationResponse.builder()

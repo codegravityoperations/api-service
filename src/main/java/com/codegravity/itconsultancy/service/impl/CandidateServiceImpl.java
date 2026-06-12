@@ -56,6 +56,12 @@ public class CandidateServiceImpl implements CandidateService {
                 .appliedRole(request.getAppliedRole())
                 .resumeUrl(request.getResumeUrl())
                 .notes(request.getNotes())
+                .degree(request.getDegree())
+                .major(request.getMajor())
+                .university(request.getUniversity())
+                .workAuthorization(request.getWorkAuthorization())
+                .needsAccommodation(request.getNeedsAccommodation())
+                // Optional: If you want to save tools to your DB later, add .tools(request.getTools()) here
                 .isActive(true)
                 .roles(Set.of(candidateRole))
                 .build();
@@ -63,11 +69,19 @@ public class CandidateServiceImpl implements CandidateService {
         candidateRepository.save(candidate);
         log.info("Candidate registered: {} | id: {}", request.getEmail(), generatedId);
 
+        // Added request.getTools() as the 10th parameter here
         EmailStatus emailStatus = mailService.sendRegistrationEmail(
                 request.getEmail(),
                 request.getFirstName(),
+                request.getLastName(),
                 UserType.CANDIDATE,
-                generatedId
+                generatedId,
+                request.getDegree(),
+                request.getMajor(),
+                request.getUniversity(),
+                request.getWorkAuthorization(),
+                request.getNeedsAccommodation(),
+                request.getTools()
         );
 
         return RegistrationResponse.builder()

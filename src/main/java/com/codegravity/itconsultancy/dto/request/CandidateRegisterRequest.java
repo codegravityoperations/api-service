@@ -35,4 +35,12 @@ public class CandidateRegisterRequest {
     private String appliedRole;
     private String resumeUrl;
     private String notes;
+
+    private String degree;
+    private String major;
+    private String university;
+    private String workAuthorization;
+    private Boolean needsAccommodation;
+    private String tools;
+
 }
