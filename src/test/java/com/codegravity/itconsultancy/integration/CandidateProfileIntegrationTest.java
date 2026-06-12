@@ -20,9 +20,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
+import com.codegravity.itconsultancy.dto.request.RegistrationEmailRequest;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -56,7 +57,7 @@ class CandidateProfileIntegrationTest {
 
     @BeforeEach
     void stubMail() {
-        given(mailService.sendRegistrationEmail(anyString(), anyString(), any(), anyString()))
+        given(mailService.sendRegistrationEmail(any(RegistrationEmailRequest.class)))
                 .willReturn(EmailStatus.SENT);
     }
 

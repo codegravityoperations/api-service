@@ -46,6 +46,9 @@ public class Candidate extends BaseEntity {
     @Column(name = "ead_url", length = 500)
     private String eadUrl;
 
+    @Column(name = "driving_license_url", length = 500)
+    private String drivingLicenseUrl;
+
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
