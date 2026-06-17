@@ -26,4 +26,6 @@ public interface CandidateService {
     CandidateProfileResponse updateProfile(String candidateId,
                                            CandidateProfileUpdateRequest request,
                                            Authentication authentication);
+
+    void deleteCandidate(String candidateId, Authentication authentication);
 }

@@ -4,6 +4,7 @@ import com.codegravity.itconsultancy.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,6 +76,12 @@ public class Candidate extends BaseEntity {
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 255)
+    private String deletedBy;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
