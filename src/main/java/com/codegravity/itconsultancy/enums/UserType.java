@@ -6,5 +6,6 @@ package com.codegravity.itconsultancy.enums;
  */
 public enum UserType {
     EMPLOYEE,
-    CANDIDATE
+    CANDIDATE,
+    ADMIN
 }

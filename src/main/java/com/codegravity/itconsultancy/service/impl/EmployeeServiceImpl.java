@@ -1,6 +1,7 @@
 package com.codegravity.itconsultancy.service.impl;
 
 import com.codegravity.itconsultancy.dto.request.EmployeeRegisterRequest;
+import com.codegravity.itconsultancy.dto.request.RegistrationEmailRequest;
 import com.codegravity.itconsultancy.dto.response.RegistrationResponse;
 import com.codegravity.itconsultancy.entity.Employee;
 import com.codegravity.itconsultancy.entity.RoleEntity;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Slf4j
@@ -73,6 +75,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                 null,
                 null,
                 null
+                RegistrationEmailRequest.builder()
+                        .toEmail(request.getEmail())
+                        .firstName(request.getFirstName())
+                        .userType(UserType.EMPLOYEE)
+                        .generatedId(generatedId)
+                        .submissionDate(LocalDate.now())
+                        .build()
         );
 
         return RegistrationResponse.builder()

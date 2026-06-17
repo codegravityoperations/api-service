@@ -38,7 +38,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         String userType = parts[1];
 
         return switch (userType) {
-            case "EMPLOYEE" -> loadEmployee(email);
+            case "EMPLOYEE", "ADMIN" -> loadEmployee(email);
             case "CANDIDATE" -> loadCandidate(email);
             default -> throw new UsernameNotFoundException("Unknown user type: " + userType);
         };
