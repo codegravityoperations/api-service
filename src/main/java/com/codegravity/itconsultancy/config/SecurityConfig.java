@@ -80,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(ApiConstants.PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/candidates").hasAnyRole("EMPLOYEE", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/candidates/*").hasAnyRole("EMPLOYEE", "ADMIN")
                         .requestMatchers("/api/employees/**").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.PUT, "/api/candidates/*/profile").hasAnyRole("CANDIDATE", "ADMIN")
                         .requestMatchers("/api/candidates/**").hasRole("CANDIDATE")

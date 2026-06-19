@@ -57,6 +57,26 @@ public class CandidateController {
     }
 
     @Operation(
+            summary = "Delete a candidate (soft delete)",
+            description = "Marks the candidate as DELETED. Only EMPLOYEE and ADMIN roles may call this endpoint.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Candidate deleted"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Access denied"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Candidate not found")
+    })
+    @DeleteMapping("/{candidateId}")
+    public ResponseEntity<ApiResponse<Void>> deleteCandidate(
+            @Parameter(description = "Candidate business ID (e.g. CND_2026_00001)")
+            @PathVariable String candidateId,
+            Authentication authentication) {
+
+        candidateService.deleteCandidate(candidateId, authentication);
+        return ResponseEntity.ok(ApiResponse.success("Candidate deleted successfully", null));
+    }
+
+    @Operation(
             summary = "Update candidate profile",
             description = "Updates education, work authorisation, tools, and accommodation fields. " +
                     "A CANDIDATE may only update their own profile; an ADMIN may update any profile.",

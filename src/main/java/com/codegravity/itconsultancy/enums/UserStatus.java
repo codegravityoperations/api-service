@@ -5,10 +5,12 @@ package com.codegravity.itconsultancy.enums;
  *
  * PENDING  → Registered but not yet verified (future use)
  * ACTIVE   → Fully active account
- * INACTIVE → Soft-deleted or deactivated account
+ * INACTIVE → Deactivated account
+ * DELETED  → Soft-deleted account
  */
 public enum UserStatus {
     PENDING,
     ACTIVE,
-    INACTIVE
+    INACTIVE,
+    DELETED
 }

@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Slf4j
@@ -158,6 +159,24 @@ public class CandidateServiceImpl implements CandidateService {
         log.info("Profile updated for candidate: {}", candidateId);
 
         return toProfileResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCandidate(String candidateId, Authentication authentication) {
+        Candidate candidate = candidateRepository.findByCandidateId(candidateId)
+                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found: " + candidateId));
+
+        String principal = authentication.getName();
+        String deletedBy = principal.contains("::") ? principal.split("::")[0] : principal;
+
+        candidate.setStatus(UserStatus.DELETED);
+        candidate.setActive(false);
+        candidate.setDeletedAt(LocalDateTime.now());
+        candidate.setDeletedBy(deletedBy);
+
+        candidateRepository.save(candidate);
+        log.info("Candidate soft-deleted: {} by {}", candidateId, deletedBy);
     }
 
     private CandidateListResponse toListResponse(Candidate candidate) {
