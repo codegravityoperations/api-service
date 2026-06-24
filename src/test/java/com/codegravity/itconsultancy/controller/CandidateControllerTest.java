@@ -61,7 +61,7 @@ class CandidateControllerTest {
         given(candidateService.updateProfile(eq("CAN-001"), any(), any())).willReturn(response);
 
         Map<String, String> requestBody = Map.of(
-                "phone", "1234567890",
+                "phone", "7896785432",
                 "address", "123 Main St",
                 "resumeUrl", "https://cdn.example.com/resume.pdf",
                 "highestEducation", "Bachelor of Science",
