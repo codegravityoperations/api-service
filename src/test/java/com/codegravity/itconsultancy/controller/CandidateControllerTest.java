@@ -48,7 +48,7 @@ class CandidateControllerTest {
     void updateProfile_validRequest_returns200() throws Exception {
         CandidateProfileResponse response = CandidateProfileResponse.builder()
                 .candidateId("CAN-001")
-                .firstName("Jane")
+                .firstName("Nikhil")
                 .lastName("Doe")
                 .email("jane.doe@example.com")
                 .phone("1234567890")
@@ -61,7 +61,7 @@ class CandidateControllerTest {
         given(candidateService.updateProfile(eq("CAN-001"), any(), any())).willReturn(response);
 
         Map<String, String> requestBody = Map.of(
-                "phone", "7896785432",
+                "phone", "78967854216",
                 "address", "123 Main St",
                 "resumeUrl", "https://cdn.example.com/resume.pdf",
                 "highestEducation", "Bachelor of Science",
